@@ -11,6 +11,14 @@ var Enemy = function(){
   this.r = 0; 
 }
 
+var Player = function () {
+  this.x = 0;
+  this.y = 0;
+  this.r = 0;
+}
+
+// Array of enemies
+
 var enemyLocation = function(){
   var arr = []; 
   var numEnemies = 20; 
@@ -22,7 +30,7 @@ var enemyLocation = function(){
     arr.push(enemy); 
   };
 
-  //console.log(arr); 
+  console.log(arr); 
   return arr; 
 };
 
@@ -32,21 +40,41 @@ var placeEnemies = function (locations) {
 
   var circles = svg.selectAll('circle')
                   .data(locations)
+                  .enter().append('circle')
                   .attr('cx', function (d) { return d.x; })
                   .attr('cy', function (d) { return d.y; })
                   .attr('r', 25)
-                  .attr('fill', 'blue')
-                  .enter().append('circle');
-
-      //circles.exit().remove();
+                  .attr('fill', 'blue');
+};
+var moveEnemies = function (locations) {
+    svg.selectAll('circle')
+        .data(locations)
+        .transition()
+          .attr('cx', function (d) { return d.x; })
+          .attr('cy', function (d) { return d.y; })
+          .duration(1200);
 };
 
-//placeEnemies(enemyLocation());
+var drag = d3.behavior.drag();
+var player = d3.select('svg').append('rect')
+              //.data([0])
+              //.enter()
+              .attr('x', 400) //function (d) { return d.x; })
+              .attr('y', 200) //function (d) { return d.y; })
+              .attr('width', 25)
+              .attr('height', 25)
+              .attr('fill', 'pink')
+              .call(drag);
+
+
+placeEnemies(enemyLocation());
 setInterval(function () {
   var locs = enemyLocation();
   console.log(locs); 
-  placeEnemies(locs);
+  moveEnemies(locs);
 }, 1000);
 
+// Enter / append placed before attribute definition works for one call, but not for multiple. Why?
+// data bind function needed? function (d) return d?
 
  
